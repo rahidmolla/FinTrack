@@ -1,21 +1,33 @@
 const express = require("express")
-const cookieParser = require("cookie-parser")
+const authMiddleware = require("../middleware/auth.middleware")
+const accountController = require("../controllers/account.controller")
+
+
+const router = express.Router()
 
 
 
-const app = express()
+/**
+ * - POST /api/accounts/
+ * - Create a new account
+ * - Protected Route
+ */
+router.post("/", authMiddleware.authMiddleware, accountController.createAccountController)
+
+
+/**
+ * - GET /api/accounts/
+ * - Get all accounts of the logged-in user
+ * - Protected Route
+ */
+router.get("/", authMiddleware.authMiddleware, accountController.getUserAccountsController)
+
+
+/**
+ * - GET /api/accounts/balance/:accountId
+ */
+router.get("/balance/:accountId", authMiddleware.authMiddleware, accountController.getAccountBalanceController)
 
 
 
-app.use(express.json())
-app.use(cookieParser())
-
-const authRouter = require("./routes/auth.routes")
-const accountRouter = require("./routes/account.routes")
-
-app.use("/api/auth", authRouter)
-app.use("/api/account", accountRouter)
-
-
-
-module.exports = app
+module.exports = router
